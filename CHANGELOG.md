@@ -1,5 +1,9 @@
 # AutomationLabsDepot Changelog
 
+## v0.1.2
+
+ * Fixed version
+
 ## v0.1.1
 
  * Fixed Depot to AutomationLabsDepot

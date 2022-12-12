@@ -1,5 +1,10 @@
 # AutomationLabsDepot Changelog
 
+## v0.1.3
+
+* fix local path automationlabs on iodata_functions
+* fix stats model with mlj report modification
+
 ## v0.1.2
 
  * Fixed version

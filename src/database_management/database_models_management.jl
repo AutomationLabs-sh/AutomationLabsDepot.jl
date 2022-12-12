@@ -176,22 +176,22 @@ function stats_model_local_folder_db(project_name::String, model_name::String)
     nbr_iter = MLJ.report(mach_predict_only).n_iterations
 
     # Get the best model 
-    loss_best = mach_predict_only.report[1].best_history_entry.measurement
+    loss_best = mach_predict_only.report.vals[1].model_report.best_history_entry.measurement
 
     # Get the worst model 
     vec = MLJ.report(mach_predict_only).model_report.history
 
     # Get the hyperparameters of the best model 
-    nbr_neuron_best = mach_predict_only.report[1].best_model.builder.neuron
-    nbr_layer_best = mach_predict_only.report[1].best_model.builder.layer
-    nbr_epochs_best = mach_predict_only.report[1].best_model.epochs
-    act_fct_best = mach_predict_only.report[1].best_model.builder.σ
+    nbr_neuron_best = mach_predict_only.report.vals[1].model_report.best_model.builder.neuron
+    nbr_layer_best = mach_predict_only.report.vals[1].model_report.best_model.builder.layer
+    nbr_epochs_best = mach_predict_only.report.vals[1].model_report.best_model.epochs
+    act_fct_best = mach_predict_only.report.vals[1].model_report.best_model.builder.σ
 
     # Get the chain of the best model 
     chain_best = MLJ.fitted_params(MLJ.fitted_params(mach_predict_only).machine).best_fitted_params[1]
 
     # Architecture of the best model  (Fnn, ResNet, ....)
-    type_architecture = string(typeof(mach_predict_only.report.model_report.best_history_entry.model.builder))[16:end]
+    type_architecture = string(typeof(mach_predict_only.report.vals[1].model_report.best_history_entry.model.builder))[30:end]
 
     return [nbr_iter, loss_best, type_architecture, nbr_neuron_best, nbr_layer_best, nbr_epochs_best, act_fct_best, chain_best]
 

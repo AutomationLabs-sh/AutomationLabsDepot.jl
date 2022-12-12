@@ -73,8 +73,8 @@ function iodata_local_folder_db(
     )
 
     #load raw data 
-    path_load_input_rawdata = DEPOT_PATH[begin] * "/automationpod/rawdata/" * dfin_name * ".parquet"
-    path_load_output_rawdata = DEPOT_PATH[begin] * "/automationpod/rawdata/" * dfout_name * ".parquet"
+    path_load_input_rawdata = DEPOT_PATH[begin] * "/automationlabs/rawdata/" * dfin_name * ".parquet"
+    path_load_output_rawdata = DEPOT_PATH[begin] * "/automationlabs/rawdata/" * dfout_name * ".parquet"
 
     dfin_tmp = Parquet2.Dataset(path_load_input_rawdata)
     dfin = DataFrame(dfin_tmp; copycols=false)

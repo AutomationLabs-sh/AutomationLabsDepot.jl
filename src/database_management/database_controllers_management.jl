@@ -15,6 +15,15 @@ function list_controller_local_folder_db(project_name)
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
     con = DBInterface.connect(DuckDB.DB, path_db)
 
+    # Evaluate if the project is in the database
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
+        @warn "unrecognized project name"
+        return false
+    end
+
     # List value from table
     results = DBInterface.execute(
         con,
@@ -33,6 +42,15 @@ function remove_controller_local_folder_db(project_name, controller_name)
     # Connect to the database
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
     con = DBInterface.connect(DuckDB.DB, path_db)
+
+    # Evaluate if the project is in the database
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
+        @warn "unrecognized project name"
+        return false
+    end
 
     # Delete the row from the data base
     DBInterface.execute(
@@ -66,6 +84,15 @@ function add_controller_local_folder_db(
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
     con = DBInterface.connect(DuckDB.DB, path_db)
 
+    # Evaluate if the project is in the database
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
+        @warn "unrecognized project name"
+        return false
+    end
+
     # Write the model
     path_file =
         DEPOT_PATH[begin] * "/automationlabs" * "/controllers/" * controller_name * ".jld"
@@ -81,12 +108,16 @@ function add_controller_local_folder_db(
     # Get the time
     datenow = string(Dates.now())
 
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+
     DBInterface.execute(
         con,
         "INSERT INTO $project_name.controllers VALUES ('$id', 'automationlabs/models', '$controller_name', '.jld', '$datenow', '$c_file_size');",
     )
 
-    return nothing
+    return true
 end
 
 

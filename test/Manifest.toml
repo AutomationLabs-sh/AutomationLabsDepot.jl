@@ -220,9 +220,9 @@ version = "1.0.2"
 
 [[deps.Compat]]
 deps = ["Dates", "LinearAlgebra", "UUIDs"]
-git-tree-sha1 = "61fdd77467a5c3ad071ef8277ac6bd6af7dd4c04"
+git-tree-sha1 = "7a60c856b9fa189eb34f5f8a6f6b5529b7942957"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.6.0"
+version = "4.6.1"
 
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -1189,9 +1189,9 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 
 [[deps.UnicodePlots]]
 deps = ["ColorSchemes", "ColorTypes", "Contour", "Crayons", "Dates", "LinearAlgebra", "MarchingCubes", "NaNMath", "Printf", "Requires", "SnoopPrecompile", "SparseArrays", "StaticArrays", "StatsBase"]
-git-tree-sha1 = "ef00b38d086414a54d679d81ced90fb7b0f03909"
+git-tree-sha1 = "a5bcfc23e352f499a1a46f428d0d3d7fb9e4fc11"
 uuid = "b8865327-cd53-5732-bb35-84acbb429228"
-version = "3.4.0"
+version = "3.4.1"
 
 [[deps.UnsafeArrays]]
 git-tree-sha1 = "3350f94f6caa02f324a23645bf524fc9334c7488"

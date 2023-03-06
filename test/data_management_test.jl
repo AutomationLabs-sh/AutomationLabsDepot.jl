@@ -51,7 +51,7 @@ end
 @testset "Add, list, load, remove the io data" begin
 
     # Create a project
-    project_name = "jean2"
+    project_name = "jean"
     project_folder_create_db(project_name)
 
     # Load the CSV files 
@@ -65,6 +65,8 @@ end
     io_name = "io_test_jean2"
     rlst = add_iodata_local_folder_db(dfin, dfout, project_name, io_name)
     @test rlst == true
+
+    sleep(5) #sleep for writing in HDD
 
     # List io data 
     rslt_list = list_iodata_local_folder_db(project_name)

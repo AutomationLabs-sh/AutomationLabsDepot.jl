@@ -17,14 +17,28 @@ function rawdata_temporal_plot_local_folder_db(df; kws_...)
     if haskey(kws, :title) == true
         title = kws[:title]
     else
-        title = "" 
+        title = ""
     end
 
-    figure = PlotlyJS.make_subplots(rows=size(df, 2), cols=1, shared_xaxes=true, vertical_spacing=0.02)
+    figure = PlotlyJS.make_subplots(
+        rows = size(df, 2),
+        cols = 1,
+        shared_xaxes = true,
+        vertical_spacing = 0.02,
+    )
 
-    for i in 1 : 1 : size(df, 2)
+    for i = 1:1:size(df, 2)
 
-        PlotlyJS.add_trace!(figure,  PlotlyJS.scatter(; y=df[:,i], mode="markers", marker = PlotlyJS.attr(maxdisplayed = 1000)), row=i, col=1)
+        PlotlyJS.add_trace!(
+            figure,
+            PlotlyJS.scatter(;
+                y = df[:, i],
+                mode = "markers",
+                marker = PlotlyJS.attr(maxdisplayed = 1000),
+            ),
+            row = i,
+            col = 1,
+        )
 
     end
 
@@ -40,8 +54,8 @@ function rawdata_box_plot_local_folder_db(df; kws_...)
 
     p_ = []
 
-    for i in 1 : 1 : size(df, 2)
-        push!(p_, PlotlyJS.box(; y=df[:,i] ))
+    for i = 1:1:size(df, 2)
+        push!(p_, PlotlyJS.box(; y = df[:, i]))
     end
 
     figure = PlotlyJS.plot(vcat(p_...))
@@ -63,8 +77,15 @@ function iodata_temporal_plot_local_folder_db(dfin, dfout; kws_...)
     p_inputs = []
 
 
-    for i in 1 : 1 : size(dfin, 2)
-        push!(p_inputs, PlotlyJS.scatter(; y=dfin[:,i], mode= "markers", marker = PlotlyJS.attr(maxdisplayed = 500)))
+    for i = 1:1:size(dfin, 2)
+        push!(
+            p_inputs,
+            PlotlyJS.scatter(;
+                y = dfin[:, i],
+                mode = "markers",
+                marker = PlotlyJS.attr(maxdisplayed = 500),
+            ),
+        )
     end
 
     plot_1 = PlotlyJS.plot(vcat(p_inputs...))
@@ -72,14 +93,21 @@ function iodata_temporal_plot_local_folder_db(dfin, dfout; kws_...)
     # Plot the scatter from the outputs
     p_outputs = []
 
-    for i in 1 : 1 : size(dfout, 2)
-        push!(p_outputs, PlotlyJS.scatter(; y=dfout[:,i] , mode= "markers", marker = PlotlyJS.attr(maxdisplayed = 500)))
+    for i = 1:1:size(dfout, 2)
+        push!(
+            p_outputs,
+            PlotlyJS.scatter(;
+                y = dfout[:, i],
+                mode = "markers",
+                marker = PlotlyJS.attr(maxdisplayed = 500),
+            ),
+        )
     end
 
     plot_2 = PlotlyJS.plot(vcat(p_outputs...))
 
     # Plot the figure with the both subplots 
-    figure =[plot_1; plot_2]
+    figure = [plot_1; plot_2]
 
     return figure
 end
@@ -94,8 +122,8 @@ function iodata_box_plot_local_folder_db(dfin, dfout; kws_...)
     # Plot the box from the training inputs
     plot_inputs = []
 
-    for i in 1 : 1 : size(dfin, 2)
-        push!(plot_inputs, PlotlyJS.box(; y=dfin[:,i] ))
+    for i = 1:1:size(dfin, 2)
+        push!(plot_inputs, PlotlyJS.box(; y = dfin[:, i]))
     end
 
     plot_1 = PlotlyJS.plot(vcat(plot_inputs...))
@@ -103,14 +131,14 @@ function iodata_box_plot_local_folder_db(dfin, dfout; kws_...)
     # Plot the box from the training outputs
     plot_outputs = []
 
-    for i in 1 : 1 : size(dfout, 2)
-        push!(plot_outputs, PlotlyJS.box(; y=dfout[:,i] ))
+    for i = 1:1:size(dfout, 2)
+        push!(plot_outputs, PlotlyJS.box(; y = dfout[:, i]))
     end
 
     plot_2 = PlotlyJS.plot(vcat(plot_outputs...))
 
     # plot the figure with the both subplots 
-    figure =[plot_1; plot_2]
+    figure = [plot_1; plot_2]
 
     return figure
 

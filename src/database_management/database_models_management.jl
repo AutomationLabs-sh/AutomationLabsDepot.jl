@@ -16,17 +16,27 @@ function list_model_local_folder_db(project_name::String)
     con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         #return a null DataFrames
-        df = DataFrames.DataFrame(id=Int[], path=Int[], name=Int[], file_extension=Int[], added=Int[], size=Int[])
+        df = DataFrames.DataFrame(
+            id = Int[],
+            path = Int[],
+            name = Int[],
+            file_extension = Int[],
+            added = Int[],
+            size = Int[],
+        )
         return df
     end
 
     # List value from table
     results = DBInterface.execute(
-        con, "SELECT id, path, name, file_extension, added, size FROM $project_name.models;"
+        con,
+        "SELECT id, path, name, file_extension, added, size FROM $project_name.models;",
     )
 
     # Transform to DataFrame
@@ -44,22 +54,30 @@ function remove_model_local_folder_db(project_name::String, model_name::String)
     con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         return false
     end
 
     # Evaluate if the model is in the database
-    model_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT id, path, name, file_extension, added, size  FROM $project_name.models WHERE name = '$model_name';"))      
+    model_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.models WHERE name = '$model_name';",
+        ),
+    )
     if size(model_list, 1) == 0
         @warn "unrecognized model name"
         return false
     end
- 
+
     # Load path data into local depot folder
-    path_model = DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jls"
- 
+    path_model =
+        DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jls"
+
     # Evaluate if the files are in the depot folder
     if isfile(path_model) == false
         @warn "unrecognized model in depot folder"
@@ -67,9 +85,7 @@ function remove_model_local_folder_db(project_name::String, model_name::String)
     end
 
     # Delete the row from the data base
-    DBInterface.execute(
-        con, "DELETE FROM $project_name.models WHERE name = '$model_name';"
-    )
+    DBInterface.execute(con, "DELETE FROM $project_name.models WHERE name = '$model_name';")
 
     # Delete the file from the path
     rm(path_model)
@@ -85,14 +101,21 @@ function add_model_local_folder_db(mach_model, project_name::String, model_name:
     con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         return false
     end
- 
+
     # Evaluate if the model is in the database
-    model_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT id, path, name, file_extension, added, size  FROM $project_name.models WHERE name = '$model_name';"))      
+    model_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.models WHERE name = '$model_name';",
+        ),
+    )
     if size(model_list, 1) != 0
         @warn "there is an equivalent model name"
         return false
@@ -100,13 +123,13 @@ function add_model_local_folder_db(mach_model, project_name::String, model_name:
 
     # Load path data into local depot folder
     path_model = DEPOT_PATH[begin] * "/automationlabs/" * "/models/" * model_name * ".jls"
-        
+
     # Evaluate if the files are in the depot folder
     if isfile(path_model) == true
         @warn "there is an equivalent model name"
         return false
     end
-    
+
     # Write the model
     MLJ.save(path_model, mach_model)
 
@@ -121,7 +144,8 @@ function add_model_local_folder_db(mach_model, project_name::String, model_name:
 
     # Update the model table with the new data
     DBInterface.execute(
-        con, "INSERT INTO $project_name.models VALUES ('$id', 'automationlabs/models', '$model_name', '.jls', '$datenow', '$file_size');"
+        con,
+        "INSERT INTO $project_name.models VALUES ('$id', 'automationlabs/models', '$model_name', '.jls', '$datenow', '$file_size');",
     )
 
     return true
@@ -132,7 +156,8 @@ end
 function load_model_local_folder_db(project_name::String, model_name::String)
 
     # Load path data into local depot folder
-    path_model = DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jls"
+    path_model =
+        DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jls"
 
     mach_predict_only = MLJ.machine(path_model)
 
@@ -147,22 +172,30 @@ function stats_model_local_folder_db(project_name::String, model_name::String)
     con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         return false
     end
 
     # Evaluate if the model is in the database
-    model_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT id, path, name, file_extension, added, size  FROM $project_name.models WHERE name = '$model_name';"))      
+    model_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.models WHERE name = '$model_name';",
+        ),
+    )
     if size(model_list, 1) == 0
         @warn "unrecognized model name"
         return false
     end
- 
+
     # Load path data into local depot folder
-    path_model = DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jls"
- 
+    path_model =
+        DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jls"
+
     # Evaluate if the files are in the depot folder
     if isfile(path_model) == false
         @warn "unrecognized model in depot folder"
@@ -182,17 +215,32 @@ function stats_model_local_folder_db(project_name::String, model_name::String)
     vec = MLJ.report(mach_predict_only).model_report.history
 
     # Get the hyperparameters of the best model 
-    nbr_neuron_best = mach_predict_only.report.vals[1].model_report.best_model.builder.neuron
+    nbr_neuron_best =
+        mach_predict_only.report.vals[1].model_report.best_model.builder.neuron
     nbr_layer_best = mach_predict_only.report.vals[1].model_report.best_model.builder.layer
     nbr_epochs_best = mach_predict_only.report.vals[1].model_report.best_model.epochs
     act_fct_best = mach_predict_only.report.vals[1].model_report.best_model.builder.σ
 
     # Get the chain of the best model 
-    chain_best = MLJ.fitted_params(MLJ.fitted_params(mach_predict_only).machine).best_fitted_params[1]
+    chain_best =
+        MLJ.fitted_params(MLJ.fitted_params(mach_predict_only).machine).best_fitted_params[1]
 
     # Architecture of the best model  (Fnn, ResNet, ....)
-    type_architecture = string(typeof(mach_predict_only.report.vals[1].model_report.best_history_entry.model.builder))[30:end]
+    type_architecture = string(
+        typeof(
+            mach_predict_only.report.vals[1].model_report.best_history_entry.model.builder,
+        ),
+    )[30:end]
 
-    return [nbr_iter, loss_best, type_architecture, nbr_neuron_best, nbr_layer_best, nbr_epochs_best, act_fct_best, chain_best]
+    return [
+        nbr_iter,
+        loss_best,
+        type_architecture,
+        nbr_neuron_best,
+        nbr_layer_best,
+        nbr_epochs_best,
+        act_fct_best,
+        chain_best,
+    ]
 
 end

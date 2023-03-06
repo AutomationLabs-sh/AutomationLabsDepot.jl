@@ -6,7 +6,7 @@
 # You can obtain one at https://mozilla.org/MPL/2.0/.  #
 ########################################################
 
-module ControllerManagementTest 
+module ControllerManagementTest
 
 using Test
 using DataFrames
@@ -46,7 +46,12 @@ end
     controller = nothing
 
     # Add the controller to local database
-    add_controller_local_folder_db(controller, controller_parameters, project_name, controller_name)
+    add_controller_local_folder_db(
+        controller,
+        controller_parameters,
+        project_name,
+        controller_name,
+    )
 
     # List the controller and test it is depicted
     list = list_controller_local_folder_db(project_name)
@@ -66,26 +71,32 @@ end
 
 end
 
-@testset "Load a controller" begin 
+@testset "Load a controller" begin
 
     # Create a project
     project_name = "jean"
     project_folder_create_db(project_name)
-    
+
     # Name of the controller
     controller_name = "c1"
-    
+
     # Parameters (random for the test as it is saved as a JLD file in folder)
     controller_parameters = Random.randstring('a':'z', 6)
-    
+
     # Controller not used as it is not recommended
     controller = nothing
-    
+
     # Add the controller to local database
-    add_controller_local_folder_db(controller, controller_parameters, project_name, controller_name)
+    add_controller_local_folder_db(
+        controller,
+        controller_parameters,
+        project_name,
+        controller_name,
+    )
 
     # Load the controller with wrong name
-    controller_loaded = load_controller_local_folder_db("fake_project_name", controller_name)
+    controller_loaded =
+        load_controller_local_folder_db("fake_project_name", controller_name)
 
     # Load the controller with wrong name
     controller_loaded = load_controller_local_folder_db(project_name, "fake_project_name")
@@ -102,7 +113,7 @@ end
     # List the controller
     list = list_controller_local_folder_db(project_name)
     @test size(list) == (0, 6)
-    
+
     # Remove the project
     remove_project_local_folder_db(project_name)
 

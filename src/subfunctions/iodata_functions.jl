@@ -23,10 +23,10 @@ struct IoData <: AbstractIoData
     data_table_dfout::DataFrames.DataFrame
     n_delay::Int
     normalisation::Bool
-    data_lower_input::Union{Vector, Matrix}
-    data_upper_input::Union{Vector, Matrix}
-    data_lower_output::Union{Vector, Matrix}
-    data_upper_output::Union{Vector, Matrix}
+    data_lower_input::Union{Vector,Matrix}
+    data_upper_input::Union{Vector,Matrix}
+    data_lower_output::Union{Vector,Matrix}
+    data_upper_output::Union{Vector,Matrix}
     data_type::DataType
 end
 
@@ -41,22 +41,22 @@ abstract type AbstractData end
 An data type from dynamical system identification problem, with train, validation and test data. They are all scale from 0 to 1.
 """
 struct DataTrain <: AbstractData
-    dt_intpus
-    dt_outputs
+    dt_intpus::Any
+    dt_outputs::Any
     DataIn::Any
     DataOut::Any
 end
 
 
 const DefaultParametersIoDataList = (
-        n_delay = 1,
-        normalisation = false,
-        data_lower_input = [-Inf],
-        data_upper_input = [Inf],
-        data_lower_output = [-Inf],
-        data_upper_output = [Inf],
-        data_type = Float64,
-    )
+    n_delay = 1,
+    normalisation = false,
+    data_lower_input = [-Inf],
+    data_upper_input = [Inf],
+    data_lower_output = [-Inf],
+    data_upper_output = [Inf],
+    data_type = Float64,
+)
 
 function iodata_local_folder_db(
     dfin_name,
@@ -64,31 +64,33 @@ function iodata_local_folder_db(
     project_name,
     data_name,
     n_delay,
-    normalisation, 
+    normalisation,
     data_lower_input,
     data_upper_input,
     data_lower_output,
     data_upper_output,
-    data_type
-    )
+    data_type,
+)
 
     #load raw data 
-    path_load_input_rawdata = DEPOT_PATH[begin] * "/automationlabs/rawdata/" * dfin_name * ".parquet"
-    path_load_output_rawdata = DEPOT_PATH[begin] * "/automationlabs/rawdata/" * dfout_name * ".parquet"
+    path_load_input_rawdata =
+        DEPOT_PATH[begin] * "/automationlabs/rawdata/" * dfin_name * ".parquet"
+    path_load_output_rawdata =
+        DEPOT_PATH[begin] * "/automationlabs/rawdata/" * dfout_name * ".parquet"
 
     dfin_tmp = Parquet2.Dataset(path_load_input_rawdata)
-    dfin = DataFrame(dfin_tmp; copycols=false)
+    dfin = DataFrame(dfin_tmp; copycols = false)
 
     dfout_tmp = Parquet2.Dataset(path_load_output_rawdata)
-    dfout = DataFrame(dfout_tmp; copycols=false)
+    dfout = DataFrame(dfout_tmp; copycols = false)
 
     # Get the struct
     iodata_struct = IoData(
-        dfin, 
-        dfout, 
+        dfin,
+        dfout,
         n_delay,
         normalisation,
-        data_lower_input, 
+        data_lower_input,
         data_upper_input,
         data_lower_output,
         data_upper_output,
@@ -97,7 +99,12 @@ function iodata_local_folder_db(
 
     DataTrain_rslt = iodata_application(iodata_struct)
 
-    add_iodata_local_folder_db(DataTrain_rslt.DataIn, DataTrain_rslt.DataOut, project_name, data_name)
+    add_iodata_local_folder_db(
+        DataTrain_rslt.DataIn,
+        DataTrain_rslt.DataOut,
+        project_name,
+        data_name,
+    )
 
     return nothing
 
@@ -105,7 +112,7 @@ end
 
 function iodata_application(data_struct::IoData)
 
-   return data_formatting_identification(
+    return data_formatting_identification(
         data_struct.data_table_dfin,
         data_struct.data_table_dfout;
         n_delay = data_struct.n_delay,
@@ -159,12 +166,12 @@ DataTrain = data_formatting_identification(
 """
 function data_formatting_identification(
     data_table_dfin::DataFrames.DataFrame,
-    data_table_dfout::DataFrames.DataFrame; 
-    kwargs...
+    data_table_dfout::DataFrames.DataFrame;
+    kwargs...,
 )
 
     # Get kwargs args
-    dict_kwargs = Dict{Symbol, Any}(kwargs)
+    dict_kwargs = Dict{Symbol,Any}(kwargs)
     n_delay = get(dict_kwargs, :n_delay, 1)
     normalisation = get(dict_kwargs, :normalisation, false)
     data_lower_input = get(dict_kwargs, :data_lower_input, [-Inf])
@@ -174,7 +181,7 @@ function data_formatting_identification(
     data_type = get(dict_kwargs, :data_type, Float64)
 
     # Data informations
-    data_table_df =  hcat(data_table_dfin, data_table_dfout)
+    data_table_df = hcat(data_table_dfin, data_table_dfout)
     n_input = size(data_table_dfin, 2)
     n_output = size(data_table_dfout, 2)
 
@@ -347,12 +354,7 @@ function data_separation_train_test(
     #TestDataOutDf = array_to_dataframe(TestDataOut, data_type)
 
     # Struct design with data separation
-    AllData = DataTrain(
-        dt_input,
-        dt_output,
-        TrainDataInDf,
-        TrainDataOutDf,
-    )
+    AllData = DataTrain(dt_input, dt_output, TrainDataInDf, TrainDataOutDf)
 
     return AllData
 end

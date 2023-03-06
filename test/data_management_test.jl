@@ -33,7 +33,7 @@ import AutomationLabsDepot: load_iodata_local_folder_db
 
     # List the raw data 
     list = list_rawdata_local_folder_db(project_name)
-    @test size(list) == (1,6)
+    @test size(list) == (1, 6)
 
     # Load raw data 
     df = load_rawdata_local_folder_db(project_name, raw_name)
@@ -57,7 +57,7 @@ end
     # Load the CSV files 
     data_in_path = "./data_QTP/data_inputs_m3h_depot_test.csv"
     data_out_path = "./data_QTP/data_outputs_depot_test.csv"
-    
+
     dfin = DataFrames.DataFrame(CSV.File(data_in_path))
     dfout = DataFrames.DataFrame(CSV.File(data_out_path))
 
@@ -73,11 +73,11 @@ end
     # Load io data 
     train_df_in, train_df_out = load_iodata_local_folder_db(project_name, io_name)
     @test train_df_in != nothing
-    @test train_df_out != nothing 
+    @test train_df_out != nothing
 
     # Remove the io data 
     rslt_rm = remove_iodata_local_folder_db(project_name, io_name)
-    @test rslt_rm == true 
+    @test rslt_rm == true
 
     # List io data 
     rslt_list = list_iodata_local_folder_db(project_name)

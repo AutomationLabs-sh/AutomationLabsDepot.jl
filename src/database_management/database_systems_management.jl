@@ -6,19 +6,37 @@
 # You can obtain one at https://mozilla.org/MPL/2.0/.  #
 ########################################################
 
-### Management controller local folder ###
+### Management systems local folder ###
 
-# List models local folder
-function list_controller_local_folder_db(project_name)
+# List systems local folder
+function list_system_local_folder_db(project_name::String)
 
     # Connect to the database
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
     con = DBInterface.connect(DuckDB.DB, path_db)
 
+    # Evaluate if the project is in the database
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
+        @warn "unrecognized project name"
+        #return a null DataFrames
+        df = DataFrames.DataFrame(
+            id = Int[],
+            path = Int[],
+            name = Int[],
+            file_extension = Int[],
+            added = Int[],
+            size = Int[],
+        )
+        return df
+    end
+
     # List value from table
     results = DBInterface.execute(
         con,
-        "SELECT id, path, name, file_extension, added, size FROM $project_name.controllers;",
+        "SELECT id, path, name, file_extension, added, size FROM $project_name.systems;",
     )
 
     # Transform to DataFrame
@@ -27,8 +45,8 @@ function list_controller_local_folder_db(project_name)
     return df
 end
 
-# Remove controller from folder and line from database duckdb
-function remove_controller_local_folder_db(project_name, controller_name)
+# Remove system from folder and line from database duckdb
+function remove_system_local_folder_db(project_name, system_name)
 
     # Connect to the database
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
@@ -37,40 +55,26 @@ function remove_controller_local_folder_db(project_name, controller_name)
     # Delete the row from the data base
     DBInterface.execute(
         con,
-        "DELETE FROM $project_name.controllers WHERE name = '$controller_name';",
+        "DELETE FROM $project_name.systems WHERE name = '$system_name';",
     )
 
     # Delete the file from the path
-    rm(
-        DEPOT_PATH[begin] *
-        "/automationlabs" *
-        "/" *
-        "controllers" *
-        "/" *
-        controller_name *
-        ".jld",
-    )
+    rm(DEPOT_PATH[begin] * "/automationlabs" * "/" * "systems" * "/" * system_name * ".jld")
 
     return nothing
 end
 
-# Add controller to local folder
-function add_controller_local_folder_db(
-    controller,
-    controller_parameters,
-    project_name,
-    controller_name,
-)
+# Add system to local folder
+function add_system_local_folder_db(system, project_name, system_name)
 
     # Connect to the database
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
     con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Write the model
-    path_file =
-        DEPOT_PATH[begin] * "/automationlabs" * "/controllers/" * controller_name * ".jld"
-    #JLD.save(path_file, "controller", controller)
-    JLD.save(path_file, "controller_parameters", Dict(pairs(controller_parameters)))
+    path_file = DEPOT_PATH[begin] * "/automationlabs" * "/systems/" * system_name * ".jld"
+    JLD.save(path_file, "system", system)
+    #JLD.save(path_file, "controller_parameters", Dict(pairs(controller_parameters)) )
 
     # Update the model table with the new data
     id = Random.randstring('a':'z', 6)
@@ -83,15 +87,14 @@ function add_controller_local_folder_db(
 
     DBInterface.execute(
         con,
-        "INSERT INTO $project_name.controllers VALUES ('$id', 'automationlabs/models', '$controller_name', '.jld', '$datenow', '$c_file_size');",
+        "INSERT INTO $project_name.systems VALUES ('$id', 'automationlabs/systems', '$system_name', '.jld', '$datenow', '$c_file_size');",
     )
 
     return nothing
 end
 
-
 # load controller from local folder
-function load_controller_local_folder_db(project_name, controller_name)
+function load_system_local_folder_db(project_name, system_name)
 
     # Connect to the database
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
@@ -110,7 +113,7 @@ function load_controller_local_folder_db(project_name, controller_name)
     c_list = DuckDB.toDataFrame(
         DBInterface.execute(
             con,
-            "SELECT id, path, name, file_extension, added, size  FROM $project_name.controllers WHERE name = '$controller_name';",
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.systems WHERE name = '$system_name';",
         ),
     )
     if size(c_list, 1) == 0
@@ -119,9 +122,8 @@ function load_controller_local_folder_db(project_name, controller_name)
     end
 
     # load the controller parameters
-    path_file =
-        DEPOT_PATH[begin] * "/automationlabs" * "/controllers/" * controller_name * ".jld"
-    controller_p = JLD.load(path_file)
+    path_file = DEPOT_PATH[begin] * "/automationlabs" * "/systems/" * system_name * ".jld"
+    system_p = JLD.load(path_file)
 
-    return controller_p
+    return system_p
 end

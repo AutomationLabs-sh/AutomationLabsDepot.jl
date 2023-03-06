@@ -22,7 +22,7 @@ using AutomationLabsDepot
     # List the project and test it is depicted
     list = list_project_local_folder_db()
 
-    @test findfirst(isequal("jean"),list) != nothing
+    @test findfirst(isequal("jean"), list) != nothing
 
     # Remove the project
     remove_project_local_folder_db(project_name)
@@ -30,7 +30,7 @@ using AutomationLabsDepot
     # List the project and test it is depicted
     list = list_project_local_folder_db()
 
-    @test findfirst(isequal("jean"),list) == nothing
+    @test findfirst(isequal("jean"), list) == nothing
 
 end
 

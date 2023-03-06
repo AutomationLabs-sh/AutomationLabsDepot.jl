@@ -54,6 +54,12 @@ export add_iodata_dashboard_local_folder_db
 export list_dash_local_folder_db
 export remove_dash_local_folder_db
 
+# systems local disk db 
+export list_system_local_folder_db
+export remove_system_local_folder_db
+export add_system_local_folder_db
+export load_system_local_folder_db
+
 # julia sub files
 
 include("database_management/database_data_management.jl")
@@ -61,6 +67,7 @@ include("database_management/database_dash_management.jl")
 include("database_management/database_models_management.jl")
 include("database_management/database_project_management.jl")
 include("database_management/database_controllers_management.jl")
+include("database_management/database_systems_management.jl")
 include("subfunctions/iodata_functions.jl")
 include("subfunctions/dashboard.jl")
 

@@ -9,35 +9,47 @@
 ### Management local data ###
 
 # Add rawdata to local folder
-function add_rawdata_local_folder_db(project_name::String, data_path::String, raw_name::String)
+function add_rawdata_local_folder_db(
+    project_name::String,
+    data_path::String,
+    raw_name::String,
+)
 
     # Connect to the database
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
     con = DBInterface.connect(DuckDB.DB, path_db)
- 
+
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         return false
     end
- 
+
     # Evaluate if the rawfiles are in the database
-    raw_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT id, path, name, file_extension, added, size  FROM $project_name.rawdata WHERE name = '$raw_name';"))      
+    raw_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.rawdata WHERE name = '$raw_name';",
+        ),
+    )
     if size(raw_list, 1) != 0
         @warn "there is an equivalent raw data name"
         return false
     end
 
     # Store data into local depot folder
-    path_name_parquet_file = DEPOT_PATH[begin] * "/automationlabs/rawdata/" * raw_name * ".parquet"
+    path_name_parquet_file =
+        DEPOT_PATH[begin] * "/automationlabs/rawdata/" * raw_name * ".parquet"
 
     # Evaluate if the files are in the depot folder
     if isfile(path_name_parquet_file) == true
         @warn "there is an equivalent raw data name"
         return false
     end
-   
+
     # Set the path from the file
     data_load_path = data_path * "/" * raw_name * ".csv"
 
@@ -51,7 +63,7 @@ function add_rawdata_local_folder_db(project_name::String, data_path::String, ra
     dfout = DataFrames.DataFrame(CSV.File(data_load_path))
 
     # Write the parquet file
-    Parquet2.writefile(path_name_parquet_file, dfout; compression_codec=:gzip)
+    Parquet2.writefile(path_name_parquet_file, dfout; compression_codec = :gzip)
 
     # Random id creation
     id = Random.randstring('a':'z', 6)
@@ -68,51 +80,65 @@ function add_rawdata_local_folder_db(project_name::String, data_path::String, ra
 
     # Update the database
     DBInterface.execute(
-        con, "INSERT INTO $project_name.rawdata VALUES ('$id', 'automationlabs/raw_data', '$raw_name', '.parquet', '$datenow', '$parquet_file_size');"
+        con,
+        "INSERT INTO $project_name.rawdata VALUES ('$id', 'automationlabs/raw_data', '$raw_name', '.parquet', '$datenow', '$parquet_file_size');",
     )
 
     return true
 end
 
 # Add iodata to local folder
-function add_iodata_local_folder_db(dfin::DataFrames.DataFrame, dfout::DataFrames.DataFrame, project_name::String, io_name::String)
+function add_iodata_local_folder_db(
+    dfin::DataFrames.DataFrame,
+    dfout::DataFrames.DataFrame,
+    project_name::String,
+    io_name::String,
+)
 
     # Update the io data table with the new data
 
     # Connect to the database
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
     con = DBInterface.connect(DuckDB.DB, path_db)
-    
+
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         return false
     end
-    
+
     # Evaluate if the iofiles are in the database
-    io_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT id, path, name, file_extension, added, size  FROM $project_name.iodata WHERE name = '$io_name';"))      
+    io_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.iodata WHERE name = '$io_name';",
+        ),
+    )
     if size(io_list, 1) != 0
         @warn "There is an equivalent io data name"
         return false
     end
 
     # Load path data into local depot folder
-    path_dfinname_parquet_file = DEPOT_PATH[begin] * "/automationlabs/iodata/dfin_" * io_name * ".parquet"
-    path_dfoutname_parquet_file = DEPOT_PATH[begin] * "/automationlabs/iodata/dfout_" * io_name * ".parquet"
-    
+    path_dfinname_parquet_file =
+        DEPOT_PATH[begin] * "/automationlabs/iodata/dfin_" * io_name * ".parquet"
+    path_dfoutname_parquet_file =
+        DEPOT_PATH[begin] * "/automationlabs/iodata/dfout_" * io_name * ".parquet"
+
     # Evaluate if the files are in the depot folder
-    if isfile(path_dfinname_parquet_file) == true || isfile(path_dfoutname_parquet_file) == true
+    if isfile(path_dfinname_parquet_file) == true ||
+       isfile(path_dfoutname_parquet_file) == true
         @warn "there is an equivalent io data name"
         return false
     end
-       
+
     # Write the parquet file
-    Parquet2.writefile(path_dfinname_parquet_file, dfin;
-                compression_codec=:gzip)
-     
-    Parquet2.writefile(path_dfoutname_parquet_file, dfout;
-                compression_codec=:gzip)
+    Parquet2.writefile(path_dfinname_parquet_file, dfin; compression_codec = :gzip)
+
+    Parquet2.writefile(path_dfoutname_parquet_file, dfout; compression_codec = :gzip)
 
     # Random id creation
     id = Random.randstring('a':'z', 6)
@@ -121,11 +147,15 @@ function add_iodata_local_folder_db(dfin::DataFrames.DataFrame, dfout::DataFrame
     datenow = string(Dates.now())
 
     # Get the size of the parquet file
-    parquet_file_size = Base.format_bytes.(filesize.(path_dfinname_parquet_file) + filesize.(path_dfoutname_parquet_file))
+    parquet_file_size =
+        Base.format_bytes.(
+            filesize.(path_dfinname_parquet_file) + filesize.(path_dfoutname_parquet_file)
+        )
 
     # Update the DuckDB database
     DBInterface.execute(
-        con, "INSERT INTO $project_name.iodata VALUES ('$id', 'automationlabs/io_data', '$io_name', '.parquet', '$datenow', '$parquet_file_size');"
+        con,
+        "INSERT INTO $project_name.iodata VALUES ('$id', 'automationlabs/io_data', '$io_name', '.parquet', '$datenow', '$parquet_file_size');",
     )
 
     return true
@@ -139,17 +169,27 @@ function list_rawdata_local_folder_db(project_name::String)
     con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         #return a null DataFrames
-        df = DataFrames.DataFrame(id=Int[], path=Int[], name=Int[], file_extension=Int[], added=Int[], size=Int[])
+        df = DataFrames.DataFrame(
+            id = Int[],
+            path = Int[],
+            name = Int[],
+            file_extension = Int[],
+            added = Int[],
+            size = Int[],
+        )
         return df
     end
 
     # List value from table
     results = DBInterface.execute(
-        con, "SELECT id, path, name, file_extension, added, size FROM $project_name.rawdata;"
+        con,
+        "SELECT id, path, name, file_extension, added, size FROM $project_name.rawdata;",
     )
 
     # Transform to DataFrame
@@ -166,17 +206,27 @@ function list_iodata_local_folder_db(project_name::String)
     con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         #return a null DataFrames
-        df = DataFrames.DataFrame(id=Int[], path=Int[], name=Int[], file_extension=Int[], added=Int[], size=Int[])
+        df = DataFrames.DataFrame(
+            id = Int[],
+            path = Int[],
+            name = Int[],
+            file_extension = Int[],
+            added = Int[],
+            size = Int[],
+        )
         return df
     end
-     
+
     # List value from table
     results = DBInterface.execute(
-        con, "SELECT id, path, name, file_extension, added, size FROM $project_name.iodata;"
+        con,
+        "SELECT id, path, name, file_extension, added, size FROM $project_name.iodata;",
     )
 
     # Transform to DataFrame
@@ -191,24 +241,32 @@ function remove_rawdata_local_folder_db(project_name::String, raw_name::String)
     # Connect to the database
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
     con = DBInterface.connect(DuckDB.DB, path_db)
- 
+
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         return false
     end
- 
+
     # Evaluate if the rawfiles are in the database
-    raw_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT id, path, name, file_extension, added, size  FROM $project_name.rawdata WHERE name = '$raw_name';"))      
+    raw_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.rawdata WHERE name = '$raw_name';",
+        ),
+    )
     if size(raw_list, 1) == 0
         @warn "unrecognized raw data name"
         return false
     end
- 
+
     # Load path data into local depot folder
-    path_df_name_parquet_file = DEPOT_PATH[begin] * "/automationlabs/rawdata/" * raw_name * ".parquet"
- 
+    path_df_name_parquet_file =
+        DEPOT_PATH[begin] * "/automationlabs/rawdata/" * raw_name * ".parquet"
+
     # Evaluate if the files are in the depot folder
     if isfile(path_df_name_parquet_file) == false
         @warn "unrecognized raw data in depot folder"
@@ -216,9 +274,7 @@ function remove_rawdata_local_folder_db(project_name::String, raw_name::String)
     end
 
     # Delete the row from the data base
-    DBInterface.execute(
-        con, "DELETE FROM $project_name.rawdata WHERE name = '$raw_name';"
-    )
+    DBInterface.execute(con, "DELETE FROM $project_name.rawdata WHERE name = '$raw_name';")
 
     # Delete the file from the path
     rm(path_df_name_parquet_file)
@@ -233,33 +289,41 @@ function remove_iodata_local_folder_db(project_name::String, io_name::String)
     con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         return false
     end
 
     # Evaluate if the iofiles are in the database
-    io_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT id, path, name, file_extension, added, size  FROM $project_name.iodata WHERE name = '$io_name';"))      
+    io_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.iodata WHERE name = '$io_name';",
+        ),
+    )
     if size(io_list, 1) == 0
-         @warn "unrecognized io data name"
+        @warn "unrecognized io data name"
         return false
     end
 
     # Load path data into local depot folder
-    path_dfinname_parquet_file = DEPOT_PATH[begin] * "/automationlabs/iodata/dfin_" * io_name * ".parquet"
-    path_dfoutname_parquet_file = DEPOT_PATH[begin] * "/automationlabs/iodata/dfout_" * io_name * ".parquet"
+    path_dfinname_parquet_file =
+        DEPOT_PATH[begin] * "/automationlabs/iodata/dfin_" * io_name * ".parquet"
+    path_dfoutname_parquet_file =
+        DEPOT_PATH[begin] * "/automationlabs/iodata/dfout_" * io_name * ".parquet"
 
     # Evaluate if the files are in the depot folder
-    if isfile(path_dfinname_parquet_file) == false || isfile(path_dfoutname_parquet_file) == false
+    if isfile(path_dfinname_parquet_file) == false ||
+       isfile(path_dfoutname_parquet_file) == false
         @warn "unrecognized io data in depot folder"
         return false
     end
 
     # Delete the row from the data base
-    DBInterface.execute(
-        con, "DELETE FROM $project_name.iodata WHERE name = '$io_name';"
-    )
+    DBInterface.execute(con, "DELETE FROM $project_name.iodata WHERE name = '$io_name';")
 
     rm(path_dfinname_parquet_file)
     rm(path_dfoutname_parquet_file)
@@ -275,21 +339,29 @@ function load_rawdata_local_folder_db(project_name, raw_name)
     con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         return false
     end
 
     # Evaluate if the rawfiles are in the database
-    raw_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT id, path, name, file_extension, added, size  FROM $project_name.rawdata WHERE name = '$raw_name';"))      
+    raw_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.rawdata WHERE name = '$raw_name';",
+        ),
+    )
     if size(raw_list, 1) == 0
         @warn "unrecognized raw data name"
         return false
     end
 
     # Load path data into local depot folder
-    path_df_name_parquet_file = DEPOT_PATH[begin] * "/automationlabs/rawdata/" * raw_name * ".parquet"
+    path_df_name_parquet_file =
+        DEPOT_PATH[begin] * "/automationlabs/rawdata/" * raw_name * ".parquet"
 
     # Evaluate if the files are in the depot folder
     if isfile(path_df_name_parquet_file) == false
@@ -298,7 +370,7 @@ function load_rawdata_local_folder_db(project_name, raw_name)
     end
 
     # Load the parquet file
-    df = DataFrame(Parquet2.Dataset(path_df_name_parquet_file) ; copycols=false)
+    df = DataFrame(Parquet2.Dataset(path_df_name_parquet_file); copycols = false)
 
     return df
 end
@@ -312,35 +384,45 @@ function load_iodata_local_folder_db(project_name, io_name)
     con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Evaluate if the project is in the database
-    project_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"))
-    if findall( x -> x == project_name, project_list[!, :schema_name]) == []
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
         @warn "unrecognized project name"
         return false
     end
 
     # Evaluate if the iofiles are in the database
-    io_list = DuckDB.toDataFrame(DBInterface.execute(con, "SELECT id, path, name, file_extension, added, size  FROM $project_name.iodata WHERE name = '$io_name';"))      
-    if size(io_list,1) == 0
+    io_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.iodata WHERE name = '$io_name';",
+        ),
+    )
+    if size(io_list, 1) == 0
         @warn "unrecognized io data name"
         return false
     end
 
     # Load path data into local depot folder
-    path_dfinname_parquet_file = DEPOT_PATH[begin] * "/automationlabs/iodata/dfin_" * io_name * ".parquet"
-    path_dfoutname_parquet_file = DEPOT_PATH[begin] * "/automationlabs/iodata/dfout_" * io_name * ".parquet"
+    path_dfinname_parquet_file =
+        DEPOT_PATH[begin] * "/automationlabs/iodata/dfin_" * io_name * ".parquet"
+    path_dfoutname_parquet_file =
+        DEPOT_PATH[begin] * "/automationlabs/iodata/dfout_" * io_name * ".parquet"
 
     # Evaluate if the files are in the depot folder
-    if isfile(path_dfinname_parquet_file) == false || isfile(path_dfoutname_parquet_file) == false
+    if isfile(path_dfinname_parquet_file) == false ||
+       isfile(path_dfoutname_parquet_file) == false
         @warn "unrecognized io data in depot folder"
         return false
     end
 
     # Load the parquet files
     dfin_parquet = Parquet2.Dataset(path_dfinname_parquet_file)
-    train_dfin = DataFrame(dfin_parquet; copycols=false)
+    train_dfin = DataFrame(dfin_parquet; copycols = false)
 
     dfout_parquet = Parquet2.Dataset(path_dfoutname_parquet_file)
-    train_dfout = DataFrame(dfout_parquet; copycols=false)
+    train_dfout = DataFrame(dfout_parquet; copycols = false)
 
     return train_dfin, train_dfout
 end

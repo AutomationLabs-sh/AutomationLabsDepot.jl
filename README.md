@@ -1,5 +1,10 @@
 # AutomationLabsDepot.jl
 
+
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
+![CI](https://github.com/AutomationLabs-sh/AutomationLabsDepot.jl/actions/workflows/ci.yml/badge.svg)
+
 Welcome to AutomationLabsDepot.jl package. AutomationLabsDepot is a low level package for AutomationLabs.jl platform. This repository is not intended to be directly imported by the user.
 ## Sub-packages used 
 

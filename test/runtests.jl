@@ -25,3 +25,7 @@ println("done (took ", took_seconds, " seconds)")
 print("Testing Dashboard Management...")
 took_seconds = @elapsed include("./dash_management_test.jl");
 println("done (took ", took_seconds, " seconds)")
+
+print("Testing System Management...")
+took_seconds = @elapsed include("./system_management_test.jl");
+println("done (took ", took_seconds, " seconds)")

@@ -84,6 +84,9 @@ function add_rawdata_local_folder_db(
         "INSERT INTO $project_name.rawdata VALUES ('$id', 'automationlabs/raw_data', '$raw_name', '.parquet', '$datenow', '$parquet_file_size');",
     )
 
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
     return true
 end
 
@@ -158,6 +161,9 @@ function add_iodata_local_folder_db(
         "INSERT INTO $project_name.iodata VALUES ('$id', 'automationlabs/io_data', '$io_name', '.parquet', '$datenow', '$parquet_file_size');",
     )
 
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
     return true
 end
 
@@ -195,6 +201,9 @@ function list_rawdata_local_folder_db(project_name::String)
     # Transform to DataFrame
     df = DuckDB.toDataFrame(results)
 
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
     return df
 end
 
@@ -231,6 +240,9 @@ function list_iodata_local_folder_db(project_name::String)
 
     # Transform to DataFrame
     df = DuckDB.toDataFrame(results)
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return df
 end
@@ -278,6 +290,9 @@ function remove_rawdata_local_folder_db(project_name::String, raw_name::String)
 
     # Delete the file from the path
     rm(path_df_name_parquet_file)
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return true
 end
@@ -328,6 +343,9 @@ function remove_iodata_local_folder_db(project_name::String, io_name::String)
     rm(path_dfinname_parquet_file)
     rm(path_dfoutname_parquet_file)
 
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
     return true
 end
 
@@ -371,6 +389,9 @@ function load_rawdata_local_folder_db(project_name, raw_name)
 
     # Load the parquet file
     df = DataFrame(Parquet2.Dataset(path_df_name_parquet_file); copycols = false)
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return df
 end
@@ -423,6 +444,9 @@ function load_iodata_local_folder_db(project_name, io_name)
 
     dfout_parquet = Parquet2.Dataset(path_dfoutname_parquet_file)
     train_dfout = DataFrame(dfout_parquet; copycols = false)
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return train_dfin, train_dfout
 end

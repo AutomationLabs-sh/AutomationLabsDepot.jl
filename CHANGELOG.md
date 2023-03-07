@@ -3,6 +3,8 @@
 ## v0.1.5
 
 * Improve tests.
+* Update DuckDB [compact].
+* Add databse closing.
 
 ## v0.1.4
 

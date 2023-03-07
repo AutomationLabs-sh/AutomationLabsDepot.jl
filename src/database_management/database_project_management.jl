@@ -141,6 +141,9 @@ function project_folder_create_db(project_name)
                            );",
     )
 
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
     return true
 end
 
@@ -153,6 +156,9 @@ function list_project_local_folder_db()
 
     # Information schema
     results = DBInterface.execute(con, "SELECT * FROM information_schema.tables;")
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     # list schema
     schema_list = []
@@ -213,6 +219,9 @@ function remove_project_local_folder_db(project_name)
     # Remove the whole schema from the database
     stg = "DROP SCHEMA IF EXISTS " * project_name * " CASCADE;"
     DBInterface.execute(con, stg)
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return true
 end

@@ -33,6 +33,9 @@ function list_controller_local_folder_db(project_name)
     # Transform to DataFrame
     df = DuckDB.toDataFrame(results)
 
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
     return df
 end
 
@@ -68,6 +71,9 @@ function remove_controller_local_folder_db(project_name, controller_name)
         controller_name *
         ".jld",
     )
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return nothing
 end
@@ -117,6 +123,9 @@ function add_controller_local_folder_db(
         "INSERT INTO $project_name.controllers VALUES ('$id', 'automationlabs/models', '$controller_name', '.jld', '$datenow', '$c_file_size');",
     )
 
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
     return true
 end
 
@@ -153,6 +162,9 @@ function load_controller_local_folder_db(project_name, controller_name)
     path_file =
         DEPOT_PATH[begin] * "/automationlabs" * "/controllers/" * controller_name * ".jld"
     controller_p = JLD.load(path_file)
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return controller_p
 end

@@ -42,6 +42,9 @@ function list_model_local_folder_db(project_name::String)
     # Transform to DataFrame
     df = DuckDB.toDataFrame(results)
 
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
     return df
 end
 
@@ -89,6 +92,9 @@ function remove_model_local_folder_db(project_name::String, model_name::String)
 
     # Delete the file from the path
     rm(path_model)
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return true
 end
@@ -147,6 +153,9 @@ function add_model_local_folder_db(mach_model, project_name::String, model_name:
         con,
         "INSERT INTO $project_name.models VALUES ('$id', 'automationlabs/models', '$model_name', '.jls', '$datenow', '$file_size');",
     )
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return true
 end
@@ -231,6 +240,9 @@ function stats_model_local_folder_db(project_name::String, model_name::String)
             mach_predict_only.report.vals[1].model_report.best_history_entry.model.builder,
         ),
     )[30:end]
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return [
         nbr_iter,

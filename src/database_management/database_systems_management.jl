@@ -42,6 +42,9 @@ function list_system_local_folder_db(project_name::String)
     # Transform to DataFrame
     df = DuckDB.toDataFrame(results)
 
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
     return df
 end
 
@@ -60,6 +63,9 @@ function remove_system_local_folder_db(project_name, system_name)
 
     # Delete the file from the path
     rm(DEPOT_PATH[begin] * "/automationlabs" * "/" * "systems" * "/" * system_name * ".jld")
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return nothing
 end
@@ -89,6 +95,9 @@ function add_system_local_folder_db(system, project_name, system_name)
         con,
         "INSERT INTO $project_name.systems VALUES ('$id', 'automationlabs/systems', '$system_name', '.jld', '$datenow', '$c_file_size');",
     )
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return nothing
 end
@@ -124,6 +133,9 @@ function load_system_local_folder_db(project_name, system_name)
     # load the controller parameters
     path_file = DEPOT_PATH[begin] * "/automationlabs" * "/systems/" * system_name * ".jld"
     system_p = JLD.load(path_file)
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return system_p
 end

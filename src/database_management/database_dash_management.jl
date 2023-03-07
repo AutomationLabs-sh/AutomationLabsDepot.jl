@@ -16,7 +16,6 @@ function add_rawdata_dashboard_local_folder_db(
     dash_name::String;
     kws_...,
 )
-
     # Get argument kws
     dict_kws = Dict{Symbol,Any}(kws_)
     kws = get(dict_kws, :kws, kws_)
@@ -91,10 +90,14 @@ function add_rawdata_dashboard_local_folder_db(
 
     # Update the dash table with the new dashboard
     id = Random.randstring('a':'z', 6)
+
     DBInterface.execute(
         con,
         "INSERT INTO $project_name.dashboards VALUES ('$id', 'automationlabs/dashboards', '$dash_name', '.html', '$datenow', '$file_size');",
     )
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return figure
 end
@@ -197,6 +200,9 @@ function add_iodata_dashboard_local_folder_db(
         "INSERT INTO $project_name.dashboards VALUES ('$id', 'automationlabs/dashboards', '$dash_name', '.html', '$datenow', '$file_size');",
     )
 
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
     return figure
 end
 
@@ -233,6 +239,9 @@ function list_dash_local_folder_db(project_name::String)
 
     # Transform to DataFrame
     df = DuckDB.toDataFrame(results)
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return df
 end
@@ -289,6 +298,9 @@ function remove_dash_local_folder_db(project_name::String, dash_name::String)
 
     # Delete the file from the path
     rm(path_dashboard)
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
 
     return true
 end

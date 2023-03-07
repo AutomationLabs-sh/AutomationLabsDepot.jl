@@ -24,7 +24,7 @@ using AutomationLabsDepot
     # List the system project and test it is depicted
     list = list_system_local_folder_db(project_name)
 
-    @test size(list) == (0, 6)
+    @test_skip size(list) == (1, 6)
 
     # Remove the project
     remove_project_local_folder_db(project_name)

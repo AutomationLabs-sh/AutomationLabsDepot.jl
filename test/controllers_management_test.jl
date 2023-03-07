@@ -60,7 +60,6 @@ end
     # List the controller and test it is depicted
     list = list_controller_local_folder_db(project_name)
 
-    println(list)
     # List the controller
     @test size(list) == (1, 6)
 

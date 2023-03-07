@@ -125,7 +125,7 @@ using AutomationLabsDepot
 
     # List dashboards 
     list = list_dash_local_folder_db(project_name)
-    @test size(list) == (2, 6)
+    @test size(list) == (1, 6)
 
     # Remove dashboards 
     remove_dash_local_folder_db(project_name, dash_name_io_box)

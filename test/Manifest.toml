@@ -348,15 +348,15 @@ version = "0.6.8"
 
 [[deps.DuckDB]]
 deps = ["DBInterface", "DataFrames", "Dates", "DuckDB_jll", "FixedPointDecimals", "Tables", "UUIDs", "WeakRefStrings"]
-git-tree-sha1 = "ed4444e2cb653fef6f4d50bed5b942caefc6a4c0"
+git-tree-sha1 = "e86556ce20ed7918eac7bad67d482f237a9187dd"
 uuid = "d2f5444f-75bc-4fdf-ac35-56f514c445e1"
-version = "0.6.0"
+version = "0.7.0"
 
 [[deps.DuckDB_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "9c8c21439116b0ed6b6640db22b7e782d0447cd5"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "7fed68c7221bedf02eb5ff82c4f17366084cca43"
 uuid = "2cbbab25-fc8b-58cf-88d4-687a02676033"
-version = "0.6.1+0"
+version = "0.7.0+1"
 
 [[deps.EarlyStopping]]
 deps = ["Dates", "Statistics"]

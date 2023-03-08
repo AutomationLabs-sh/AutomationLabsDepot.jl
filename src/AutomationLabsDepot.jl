@@ -20,7 +20,6 @@ import Random
 import PlotlyJS
 import CUDA
 import StatsBase
-import AutomationLabs
 
 # iodata
 export iodata_local_folder_db

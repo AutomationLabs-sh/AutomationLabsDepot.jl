@@ -20,6 +20,7 @@ import Random
 import PlotlyJS
 import CUDA
 import StatsBase
+import AutomationLabs
 
 # iodata
 export iodata_local_folder_db
@@ -61,6 +62,7 @@ export add_system_local_folder_db
 export load_system_local_folder_db
 
 # julia sub files
+include("subfunctions/types.jl")
 
 include("database_management/database_data_management.jl")
 include("database_management/database_dash_management.jl")

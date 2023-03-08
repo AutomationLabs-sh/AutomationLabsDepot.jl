@@ -160,6 +160,164 @@ function add_model_local_folder_db(mach_model, project_name::String, model_name:
     return true
 end
 
+# Add model to local folder
+function add_model_local_folder_db(
+    project_name::String,
+    model_name::String,
+    variation::Function,
+    A::Union{Matrix,Vector},
+    B::Union{Matrix,Vector},
+    nbr_state::Int,
+    nbr_input::Int,
+)
+
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+
+    # Evaluate if the project is in the database
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
+        @warn "unrecognized project name"
+        return false
+    end
+
+    # Evaluate if the model is in the database
+    model_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.models WHERE name = '$model_name';",
+        ),
+    )
+    if size(model_list, 1) != 0
+        @warn "there is an equivalent model name"
+        return false
+    end
+
+    # Load path data into local depot folder
+    path_model = DEPOT_PATH[begin] * "/automationlabs/" * "/models/" * model_name * ".jld"
+
+    # Evaluate if the files are in the depot folder
+    if isfile(path_model) == true
+        @warn "there is an equivalent model name"
+        return false
+    end
+
+    # Evaluate if it is a continuous or discrete user model
+    if variation == "continuous"
+        model = ContinuousLinearModel(A, B, nbr_state, nbr_input)
+    elseif variation == "discrete"
+        model = DiscreteLinearModel(A, B, nbr_state, nbr_input)
+    else
+        @warn "there is no variation information"
+        return false
+    end
+
+    # Write the model
+    JLD.save(path_model, "model", model)
+
+    # Get a random id
+    id = Random.randstring('a':'z', 6)
+
+    # Get the time
+    datenow = string(Dates.now())
+
+    # Get the size of the parquet file
+    file_size = Base.format_bytes.(filesize.(path_model))
+
+    # Update the model table with the new data
+    DBInterface.execute(
+        con,
+        "INSERT INTO $project_name.models VALUES ('$id', 'automationlabs/models', '$model_name', '.jld', '$datenow', '$file_size');",
+    )
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
+    return true
+end
+
+# Add model to local folder
+function add_model_local_folder_db(
+    project_name::String,
+    model_name::String,
+    variation::String,
+    f::Function,
+    nbr_state::Int,
+    nbr_input::Int,
+)
+
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+
+    # Evaluate if the project is in the database
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
+        @warn "unrecognized project name"
+        return false
+    end
+
+    # Evaluate if the model is in the database
+    model_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.models WHERE name = '$model_name';",
+        ),
+    )
+    if size(model_list, 1) != 0
+        @warn "there is an equivalent model name"
+        return false
+    end
+
+    # Load path data into local depot folder
+    path_model = DEPOT_PATH[begin] * "/automationlabs/" * "/models/" * model_name * ".jld"
+
+    # Evaluate if the files are in the depot folder
+    if isfile(path_model) == true
+        @warn "there is an equivalent model name"
+        return false
+    end
+
+    # Evaluation if it is a continuous or discrete user model
+    if variation == "continuous"
+        # It is a continuous variation and non linear model
+        model = ContinuousNonLinearModel(f, nbr_state, nbr_input)
+    elseif variation == "discrete"
+        model = DiscreteNonLinearModel(f, nbr_state, nbr_input)
+    else
+        @warn "there is no variation information"
+        return false
+    end
+
+    # Write the model
+    JLD.save(path_model, "model", model)
+
+    # Get a random id
+    id = Random.randstring('a':'z', 6)
+
+    # Get the time
+    datenow = string(Dates.now())
+
+    # Get the size of the parquet file
+    file_size = Base.format_bytes.(filesize.(path_model))
+
+    # Update the model table with the new data
+    DBInterface.execute(
+        con,
+        "INSERT INTO $project_name.models VALUES ('$id', 'automationlabs/models', '$model_name', '.jld', '$datenow', '$file_size');",
+    )
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
+    return true
+end
+
 
 # Load model from local folder
 function load_model_local_folder_db(project_name::String, model_name::String)

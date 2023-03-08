@@ -1,5 +1,9 @@
 # AutomationLabsDepot Changelog
 
+## v0.1.6
+
+* Add local save model from user defined function.
+
 ## v0.1.5
 
 * Improve tests.

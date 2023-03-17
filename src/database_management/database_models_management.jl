@@ -83,8 +83,13 @@ function remove_model_local_folder_db(project_name::String, model_name::String)
 
     # Evaluate if the files are in the depot folder
     if isfile(path_model) == false
-        @warn "unrecognized model in depot folder"
-        return false
+        # Load path data into local depot folder if it is a jld model
+        path_model =
+            DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jld"
+        if isfile(path_model) ==false
+            @warn "unrecognized model in depot folder"
+            return false
+        end
     end
 
     # Delete the row from the data base
@@ -164,7 +169,7 @@ end
 function add_model_local_folder_db(
     project_name::String,
     model_name::String,
-    variation::Function,
+    variation::String,
     A::Union{Matrix,Vector},
     B::Union{Matrix,Vector},
     nbr_state::Int,
@@ -318,15 +323,28 @@ function add_model_local_folder_db(
     return true
 end
 
-
 # Load model from local folder
 function load_model_local_folder_db(project_name::String, model_name::String)
 
     # Load path data into local depot folder
-    path_model =
+    path_model_jls =
         DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jls"
 
-    mach_predict_only = MLJ.machine(path_model)
+    # Load path data into local depot folder
+    path_model_jld =
+        DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jld"
+
+    # Evaluate if the files are in the depot folder
+    if isfile(path_model_jls) == true
+        mach_predict_only = MLJ.machine(path_model_jls)
+
+    elseif isfile(path_model_jld) == true
+        mach_predict_only = JLD.load(path_model_jld)["model"]
+
+    else
+        @warn "unrecognized model in depot folder"
+        return false 
+    end
 
     return mach_predict_only
 end

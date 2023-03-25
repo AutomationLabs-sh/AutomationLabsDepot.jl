@@ -24,6 +24,10 @@ function list_controller_local_folder_db(project_name)
         return false
     end
 
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+
     # List value from table
     results = DBInterface.execute(
         con,
@@ -54,6 +58,10 @@ function remove_controller_local_folder_db(project_name, controller_name)
         @warn "unrecognized project name"
         return false
     end
+
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Delete the row from the data base
     DBInterface.execute(
@@ -145,6 +153,10 @@ function load_controller_local_folder_db(project_name, controller_name)
         @warn "unrecognized project name"
         return false
     end
+
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Evaluate if the controller is in the database
     c_list = DuckDB.toDataFrame(

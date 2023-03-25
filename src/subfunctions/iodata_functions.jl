@@ -99,14 +99,14 @@ function iodata_local_folder_db(
 
     DataTrain_rslt = iodata_application(iodata_struct)
 
-    add_iodata_local_folder_db(
+    rslt = add_iodata_local_folder_db(
         DataTrain_rslt.DataIn,
         DataTrain_rslt.DataOut,
         project_name,
         data_name,
     )
 
-    return nothing
+    return rslt
 
 end
 

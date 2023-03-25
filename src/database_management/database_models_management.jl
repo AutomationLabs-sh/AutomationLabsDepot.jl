@@ -86,10 +86,6 @@ function remove_model_local_folder_db(project_name::String, model_name::String)
         # Load path data into local depot folder if it is a jld model
         path_model =
             DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jld"
-        if isfile(path_model) ==false
-            @warn "unrecognized model in depot folder"
-            return false
-        end
     end
 
     # Delete the row from the data base

@@ -62,7 +62,7 @@ end
     dfout = DataFrames.DataFrame(CSV.File(data_out_path))
 
     # io data 
-    io_name = "io_test_jean2"
+    io_name = "io_test_jean3"
     rlst = add_iodata_local_folder_db(dfin, dfout, project_name, io_name)
     @test rlst == true
 

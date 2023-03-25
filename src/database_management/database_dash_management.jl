@@ -79,7 +79,7 @@ function add_rawdata_dashboard_local_folder_db(
 
     # Write the dashboard on local folder
     path_to_save =
-        DEPOT_PATH[begin] * "/automationlabs/" * "/dashboards/" * dash_name * ".html"
+        DEPOT_PATH[begin] * "/automationlabs/" * "/dashboards/" * dash_name * ".png"
     PlotlyJS.savefig(figure, path_to_save)
 
     # Get the time
@@ -91,9 +91,13 @@ function add_rawdata_dashboard_local_folder_db(
     # Update the dash table with the new dashboard
     id = Random.randstring('a':'z', 6)
 
+    # Connect to the database everytime the DB is requested
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+    
     DBInterface.execute(
         con,
-        "INSERT INTO $project_name.dashboards VALUES ('$id', 'automationlabs/dashboards', '$dash_name', '.html', '$datenow', '$file_size');",
+        "INSERT INTO $project_name.dashboards VALUES ('$id', 'automationlabs/dashboards', '$dash_name', '.png', '$datenow', '$file_size');",
     )
 
     # Close and disconnect the DuckDB database 
@@ -184,7 +188,7 @@ function add_iodata_dashboard_local_folder_db(
 
     # Write the dashboard on local folder
     path_to_save =
-        DEPOT_PATH[begin] * "/automationlabs/" * "/dashboards/" * dash_name * ".html"
+        DEPOT_PATH[begin] * "/automationlabs/" * "/dashboards/" * dash_name * ".png"
     PlotlyJS.savefig(figure, path_to_save)
 
     # Get the time
@@ -195,9 +199,14 @@ function add_iodata_dashboard_local_folder_db(
 
     # Update the dash table with the new dashboard
     id = Random.randstring('a':'z', 6)
+
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)   
+
     DBInterface.execute(
         con,
-        "INSERT INTO $project_name.dashboards VALUES ('$id', 'automationlabs/dashboards', '$dash_name', '.html', '$datenow', '$file_size');",
+        "INSERT INTO $project_name.dashboards VALUES ('$id', 'automationlabs/dashboards', '$dash_name', '.png', '$datenow', '$file_size');",
     )
 
     # Close and disconnect the DuckDB database 
@@ -262,6 +271,10 @@ function remove_dash_local_folder_db(project_name::String, dash_name::String)
         return false
     end
 
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+
     # Evaluate if the dash is in the database
     dash_list = DuckDB.toDataFrame(
         DBInterface.execute(
@@ -282,7 +295,7 @@ function remove_dash_local_folder_db(project_name::String, dash_name::String)
         "dashboards" *
         "/" *
         dash_name *
-        ".html"
+        ".png"
 
     # Evaluate if the file is in the depot folder
     if isfile(path_dashboard) == false
@@ -290,6 +303,10 @@ function remove_dash_local_folder_db(project_name::String, dash_name::String)
         return false
     end
 
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+    
     # Delete the row from the data base
     DBInterface.execute(
         con,

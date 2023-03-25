@@ -17,11 +17,10 @@ using AutomationLabsDepot
 @testset "Add a dashboard" begin
 
     # Create a project
-    project_name = "jean"
+    project_name = "bx"
     project_folder_create_db(project_name)
 
     # Add the raw data
-    project_name = "jean"
     data_path = "./data_QTP"
     raw_name = "data_outputs_depot_test"
 
@@ -36,6 +35,7 @@ using AutomationLabsDepot
         recipe,
         dash_name_raw_box,
     )
+    #sleep(120)
     @test figure != nothing
 
     recipe = "temporal"
@@ -46,6 +46,7 @@ using AutomationLabsDepot
         recipe,
         dash_name_raw_temporal,
     )
+    #sleep(120)
     @test figure != nothing
 
     # wrong project name 
@@ -59,7 +60,7 @@ using AutomationLabsDepot
     @test figure_false_project_name == false
 
     # wrong raw name 
-    project_name = "jean"
+    project_name = "bx"
     raw_name = "t"
     figure_false_raw_name = add_rawdata_dashboard_local_folder_db(
         project_name,
@@ -89,6 +90,7 @@ using AutomationLabsDepot
         recipe,
         dash_name_io_box,
     )
+    #sleep(120)
     @test figure_io_box != nothing
 
     dash_name_io_temporal = "dash_io_test_temporal"
@@ -99,6 +101,7 @@ using AutomationLabsDepot
         recipe,
         dash_name_io_temporal,
     )
+   # sleep(120)
     @test figure_io_temporal != nothing
 
     # wrong project name 
@@ -113,7 +116,7 @@ using AutomationLabsDepot
     @test figure_false_project_name == false
 
     # wrong io name 
-    project_name = "jean"
+    project_name = "bx"
     raw_name = "t"
     figure_false_io_name = add_iodata_dashboard_local_folder_db(
         project_name,
@@ -125,13 +128,18 @@ using AutomationLabsDepot
 
     # List dashboards 
     list = list_dash_local_folder_db(project_name)
-    @test size(list) == (1, 6)
+    @test size(list) == (4, 6)
 
     # Remove dashboards 
+    println("start remove dashboards")
     remove_dash_local_folder_db(project_name, dash_name_io_box)
+    #sleep(15)
     remove_dash_local_folder_db(project_name, dash_name_io_temporal)
+    #leep(15)
     remove_dash_local_folder_db(project_name, dash_name_raw_box)
+    #sleep(15)
     remove_dash_local_folder_db(project_name, dash_name_raw_temporal)
+    #sleep(15)
 
     # List dashboards 
     list = list_dash_local_folder_db(project_name)

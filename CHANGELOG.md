@@ -1,5 +1,12 @@
 # AutomationLabsDepot Changelog
 
+## v 0.1.8
+
+* Io function modification.
+* Add connection to the DuckDB everytime the database is requested.
+* Ci codecov v3.
+* Tests improvement.
+
 ## v0.1.7
 
 * Add local remove model from user defined function.

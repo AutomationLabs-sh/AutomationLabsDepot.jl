@@ -121,7 +121,7 @@ function add_iodata_local_folder_db(
         ),
     )
     if size(io_list, 1) != 0
-        @warn "There is an equivalent io data name"
+        @warn "There is an equivalent io data name in the database"
         return false
     end
 
@@ -134,7 +134,7 @@ function add_iodata_local_folder_db(
     # Evaluate if the files are in the depot folder
     if isfile(path_dfinname_parquet_file) == true ||
        isfile(path_dfoutname_parquet_file) == true
-        @warn "there is an equivalent io data name"
+        @warn "there is an equivalent io data name in the folder"
         return false
     end
 
@@ -155,12 +155,16 @@ function add_iodata_local_folder_db(
             filesize.(path_dfinname_parquet_file) + filesize.(path_dfoutname_parquet_file)
         )
 
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+
     # Update the DuckDB database
     DBInterface.execute(
         con,
         "INSERT INTO $project_name.iodata VALUES ('$id', 'automationlabs/io_data', '$io_name', '.parquet', '$datenow', '$parquet_file_size');",
     )
-
+  
     # Close and disconnect the DuckDB database 
     DBInterface.close!(con)
 

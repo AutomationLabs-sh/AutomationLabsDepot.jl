@@ -33,6 +33,10 @@ function list_system_local_folder_db(project_name::String)
         return df
     end
 
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+
     # List value from table
     results = DBInterface.execute(
         con,
@@ -91,6 +95,10 @@ function add_system_local_folder_db(system, project_name, system_name)
     # Get the time
     datenow = string(Dates.now())
 
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+
     DBInterface.execute(
         con,
         "INSERT INTO $project_name.systems VALUES ('$id', 'automationlabs/systems', '$system_name', '.jld', '$datenow', '$c_file_size');",
@@ -117,6 +125,10 @@ function load_system_local_folder_db(project_name, system_name)
         @warn "unrecognized project name"
         return false
     end
+
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Evaluate if the controller is in the database
     c_list = DuckDB.toDataFrame(

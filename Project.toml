@@ -1,7 +1,7 @@
 name = "AutomationLabsDepot"
 uuid = "cc8afec4-1da4-4339-ab39-14f2715a249b"
 authors = ["Pierre Blaud <pierre.blaud@ikmail.com> and contributors"]
-version = "0.1.7"
+version = "0.1.8"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"

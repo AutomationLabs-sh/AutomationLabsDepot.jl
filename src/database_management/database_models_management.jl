@@ -33,6 +33,10 @@ function list_model_local_folder_db(project_name::String)
         return df
     end
 
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+
     # List value from table
     results = DBInterface.execute(
         con,
@@ -87,6 +91,10 @@ function remove_model_local_folder_db(project_name::String, model_name::String)
         path_model =
             DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jld"
     end
+
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Delete the row from the data base
     DBInterface.execute(con, "DELETE FROM $project_name.models WHERE name = '$model_name';")
@@ -148,6 +156,10 @@ function add_model_local_folder_db(mach_model, project_name::String, model_name:
 
     # Get the size of the parquet file
     file_size = Base.format_bytes.(filesize.(path_model))
+
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Update the model table with the new data
     DBInterface.execute(
@@ -228,6 +240,10 @@ function add_model_local_folder_db(
     # Get the size of the parquet file
     file_size = Base.format_bytes.(filesize.(path_model))
 
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+
     # Update the model table with the new data
     DBInterface.execute(
         con,
@@ -306,6 +322,10 @@ function add_model_local_folder_db(
 
     # Get the size of the parquet file
     file_size = Base.format_bytes.(filesize.(path_model))
+
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Update the model table with the new data
     DBInterface.execute(

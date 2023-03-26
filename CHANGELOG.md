@@ -1,6 +1,10 @@
 # AutomationLabsDepot Changelog
 
-## v 0.1.8
+## v0.1.9
+
+* Add connection to the DuckDB everytime the database is requested for model management.
+
+## v0.1.8
 
 * Io function modification.
 * Add connection to the DuckDB everytime the database is requested.

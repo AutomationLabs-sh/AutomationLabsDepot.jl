@@ -12,7 +12,7 @@ jobs:
         version:
           - '1' # The latest point-release
           #- '1.6' # The LTS release
-          - 'nightly' # The bleeding-edge under developpement
+          #- 'nightly' # The bleeding-edge under developpement
         os:
           - ubuntu-latest
           - macOS-latest

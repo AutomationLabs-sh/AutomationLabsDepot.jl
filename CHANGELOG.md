@@ -1,5 +1,9 @@
 # AutomationLabsDepot Changelog
 
+## v0.1.10
+
+* Modification JLD.jl with JLD2.jl in order to save files.
+
 ## v0.1.9
 
 * Add connection to the DuckDB everytime the database is requested for model management.

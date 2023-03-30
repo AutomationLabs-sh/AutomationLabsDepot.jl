@@ -66,7 +66,7 @@ function remove_system_local_folder_db(project_name, system_name)
     )
 
     # Delete the file from the path
-    rm(DEPOT_PATH[begin] * "/automationlabs" * "/" * "systems" * "/" * system_name * ".jld")
+    rm(DEPOT_PATH[begin] * "/automationlabs" * "/" * "systems" * "/" * system_name * ".jld2")
 
     # Close and disconnect the DuckDB database 
     DBInterface.close!(con)
@@ -82,9 +82,10 @@ function add_system_local_folder_db(system, project_name, system_name)
     con = DBInterface.connect(DuckDB.DB, path_db)
 
     # Write the model
-    path_file = DEPOT_PATH[begin] * "/automationlabs" * "/systems/" * system_name * ".jld"
-    JLD.save(path_file, "system", system)
+    path_file = DEPOT_PATH[begin] * "/automationlabs" * "/systems/" * system_name * ".jld2"
+    #JLD.save(path_file, "system", system)
     #JLD.save(path_file, "controller_parameters", Dict(pairs(controller_parameters)) )
+    JLD2.jldsave(path_file; system)
 
     # Update the model table with the new data
     id = Random.randstring('a':'z', 6)
@@ -101,7 +102,7 @@ function add_system_local_folder_db(system, project_name, system_name)
 
     DBInterface.execute(
         con,
-        "INSERT INTO $project_name.systems VALUES ('$id', 'automationlabs/systems', '$system_name', '.jld', '$datenow', '$c_file_size');",
+        "INSERT INTO $project_name.systems VALUES ('$id', 'automationlabs/systems', '$system_name', '.jld2', '$datenow', '$c_file_size');",
     )
 
     # Close and disconnect the DuckDB database 
@@ -143,8 +144,10 @@ function load_system_local_folder_db(project_name, system_name)
     end
 
     # load the controller parameters
-    path_file = DEPOT_PATH[begin] * "/automationlabs" * "/systems/" * system_name * ".jld"
-    system_p = JLD.load(path_file)
+    path_file = DEPOT_PATH[begin] * "/automationlabs" * "/systems/" * system_name * ".jld2"
+    #system_p = JLD.load(path_file)
+    #global system_p = JLD2.jldopen(path_file, "r")
+    system_p = JLD2.load(path_file, "system")
 
     # Close and disconnect the DuckDB database 
     DBInterface.close!(con)

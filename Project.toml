@@ -1,7 +1,7 @@
 name = "AutomationLabsDepot"
 uuid = "cc8afec4-1da4-4339-ab39-14f2715a249b"
 authors = ["Pierre Blaud <pierre.blaud@ikmail.com> and contributors"]
-version = "0.1.9"
+version = "0.1.10"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
@@ -10,7 +10,7 @@ DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 DuckDB = "d2f5444f-75bc-4fdf-ac35-56f514c445e1"
 FilePathsBase = "48062228-2e41-5def-b9a4-89aafe57970f"
-JLD = "4138dd39-2aa7-5051-a626-17a0bb65d9c8"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 MLJ = "add582a8-e3ab-11e8-2d5e-e98b27df1bc7"
 Parquet2 = "98572fba-bba0-415d-956f-fa77e587d26d"
 PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
@@ -22,17 +22,17 @@ CSV = "0.10"
 CUDA = "4"
 DataFrames = "1"
 DuckDB = "0.7"
-JLD = "0.13"
+FilePathsBase = "0.9"
 MLJ = "0.19"
 Parquet2 = "0.2"
-FilePathsBase = "0.9"
 PlotlyJS = "0.18"
 StatsBase = "0.33"
+JLD2 = "0.4"
 julia = "1"
 
 [extras]
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 MathematicalSystems = "d14a8603-c872-5ed3-9ece-53e0e82e39da"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = ["Test", "MathematicalSystems"]

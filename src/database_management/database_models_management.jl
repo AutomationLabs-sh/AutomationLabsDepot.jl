@@ -89,7 +89,7 @@ function remove_model_local_folder_db(project_name::String, model_name::String)
     if isfile(path_model) == false
         # Load path data into local depot folder if it is a jld model
         path_model =
-            DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jld"
+            DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jld2"
     end
 
     # Connect to the database
@@ -109,7 +109,11 @@ function remove_model_local_folder_db(project_name::String, model_name::String)
 end
 
 # Add model to local folder
-function add_model_local_folder_db(mach_model, project_name::String, model_name::String)
+function add_model_local_folder_db(
+    mach_model, 
+    project_name::String, 
+    model_name::String
+)
 
     # Connect to the database
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
@@ -210,7 +214,7 @@ function add_model_local_folder_db(
     end
 
     # Load path data into local depot folder
-    path_model = DEPOT_PATH[begin] * "/automationlabs/" * "/models/" * model_name * ".jld"
+    path_model = DEPOT_PATH[begin] * "/automationlabs/" * "/models/" * model_name * ".jld2"
 
     # Evaluate if the files are in the depot folder
     if isfile(path_model) == true
@@ -229,7 +233,8 @@ function add_model_local_folder_db(
     end
 
     # Write the model
-    JLD.save(path_model, "model", model)
+    #JLD.save(path_model, "model", model)
+    JLD2.jldsave(path_model; model = model)
 
     # Get a random id
     id = Random.randstring('a':'z', 6)
@@ -292,7 +297,7 @@ function add_model_local_folder_db(
     end
 
     # Load path data into local depot folder
-    path_model = DEPOT_PATH[begin] * "/automationlabs/" * "/models/" * model_name * ".jld"
+    path_model = DEPOT_PATH[begin] * "/automationlabs/" * "/models/" * model_name * ".jld2"
 
     # Evaluate if the files are in the depot folder
     if isfile(path_model) == true
@@ -312,7 +317,8 @@ function add_model_local_folder_db(
     end
 
     # Write the model
-    JLD.save(path_model, "model", model)
+    #JLD.save(path_model, "model", model)
+    JLD2.jldsave(path_model; model = model)
 
     # Get a random id
     id = Random.randstring('a':'z', 6)
@@ -347,15 +353,16 @@ function load_model_local_folder_db(project_name::String, model_name::String)
         DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jls"
 
     # Load path data into local depot folder
-    path_model_jld =
-        DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jld"
+    path_model_jld2 =
+        DEPOT_PATH[begin] * "/automationlabs" * "/" * "models" * "/" * model_name * ".jld2"
 
     # Evaluate if the files are in the depot folder
     if isfile(path_model_jls) == true
         mach_predict_only = MLJ.machine(path_model_jls)
 
-    elseif isfile(path_model_jld) == true
-        mach_predict_only = JLD.load(path_model_jld)["model"]
+    elseif isfile(path_model_jld2) == true
+        #mach_predict_only = JLD.load(path_model_jld2)["model"]
+        mach_predict_only = JLD2.load(path_file, "controller")["model"]
 
     else
         @warn "unrecognized model in depot folder"

@@ -77,7 +77,7 @@ function remove_controller_local_folder_db(project_name, controller_name)
         "controllers" *
         "/" *
         controller_name *
-        ".jld",
+        ".jld2",
     )
 
     # Close and disconnect the DuckDB database 
@@ -109,9 +109,10 @@ function add_controller_local_folder_db(
 
     # Write the model
     path_file =
-        DEPOT_PATH[begin] * "/automationlabs" * "/controllers/" * controller_name * ".jld"
+        DEPOT_PATH[begin] * "/automationlabs" * "/controllers/" * controller_name * ".jld2"
     #JLD.save(path_file, "controller", controller)
-    JLD.save(path_file, "controller_parameters", Dict(pairs(controller_parameters)))
+    #JLD.save(path_file, "controller_parameters", Dict(pairs(controller_parameters)))
+    JLD2.jldsave(path_file; controller = Dict(pairs(controller_parameters)))
 
     # Update the model table with the new data
     id = Random.randstring('a':'z', 6)
@@ -128,11 +129,13 @@ function add_controller_local_folder_db(
 
     DBInterface.execute(
         con,
-        "INSERT INTO $project_name.controllers VALUES ('$id', 'automationlabs/models', '$controller_name', '.jld', '$datenow', '$c_file_size');",
+        "INSERT INTO $project_name.controllers VALUES ('$id', 'automationlabs/models', '$controller_name', '.jld2', '$datenow', '$c_file_size');",
     )
 
     # Close and disconnect the DuckDB database 
     DBInterface.close!(con)
+
+    # Add a check that everything is saved properly for the true flag
 
     return true
 end
@@ -172,8 +175,11 @@ function load_controller_local_folder_db(project_name, controller_name)
 
     # load the controller parameters
     path_file =
-        DEPOT_PATH[begin] * "/automationlabs" * "/controllers/" * controller_name * ".jld"
-    controller_p = JLD.load(path_file)
+        DEPOT_PATH[begin] * "/automationlabs" * "/controllers/" * controller_name * ".jld2"
+    #controller_p = JLD.load(path_file)
+
+    controller_p = JLD2.load(path_file, "controller")
+
 
     # Close and disconnect the DuckDB database 
     DBInterface.close!(con)

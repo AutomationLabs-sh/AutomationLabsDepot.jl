@@ -362,7 +362,7 @@ function load_model_local_folder_db(project_name::String, model_name::String)
 
     elseif isfile(path_model_jld2) == true
         #mach_predict_only = JLD.load(path_model_jld2)["model"]
-        mach_predict_only = JLD2.load(path_file, "controller")["model"]
+        mach_predict_only = JLD2.load(path_model_jld2, "model")#["model"]
 
     else
         @warn "unrecognized model in depot folder"

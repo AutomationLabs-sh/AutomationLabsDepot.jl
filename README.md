@@ -15,7 +15,7 @@ This package uses the following packages:
 * [DataFrames](https://github.com/JuliaData/DataFrames.jl) with MIT licence.
 * [Dates](https://github.com/JuliaLang/julia/tree/master/stdlib/Dates) with MIT licence.
 * [DuckDB](https://duckdb.org/) with MIT licence.
-* [JLD](https://github.com/JuliaIO/JLD.jl) with MIT licence.
+* [JLD2](https://github.com/JuliaIO/JLD2.jl) with MIT licence.
 * [Parquet2](https://gitlab.com/ExpandingMan/Parquet2.jl) with MIT licence
 * [FilePathsBase](https://github.com/rofinn/FilePathsBase.jl) with MIT licence
 * [MLJ](https://github.com/alan-turing-institute/MLJ.jl) with MIT licence

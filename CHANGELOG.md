@@ -1,5 +1,9 @@
 # AutomationLabsDepot Changelog
 
+## v0.1.11
+
+* Add exportation management methods for the depot.
+
 ## v0.1.10
 
 * Modification JLD.jl with JLD2.jl in order to save files.

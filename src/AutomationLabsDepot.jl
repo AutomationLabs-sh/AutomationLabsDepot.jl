@@ -8,18 +8,17 @@
 module AutomationLabsDepot
 
 #package needed
-import CSV
+import CSV #needed?
 import DataFrames
 import Dates
 import DuckDB
-#import JLD
 import JLD2
 import Parquet2
 import FilePathsBase
 import MLJ
 import Random
 import PlotlyJS
-import CUDA
+import CUDA #needed?
 import StatsBase
 
 # iodata
@@ -61,6 +60,11 @@ export remove_system_local_folder_db
 export add_system_local_folder_db
 export load_system_local_folder_db
 
+# exportations local disk db 
+export list_exportation_local_folder_db
+export remove_exportation_local_folder_db
+export add_exportation_local_folder_db
+
 # julia sub files
 include("subfunctions/types.jl")
 
@@ -70,6 +74,7 @@ include("database_management/database_models_management.jl")
 include("database_management/database_project_management.jl")
 include("database_management/database_controllers_management.jl")
 include("database_management/database_systems_management.jl")
+include("database_management/database_exportation_management.jl")
 include("subfunctions/iodata_functions.jl")
 include("subfunctions/dashboard.jl")
 

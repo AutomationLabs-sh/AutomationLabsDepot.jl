@@ -15,7 +15,7 @@ const DEFAUT_FOLDER_TEMPLATE = [
     "rawdata",
     "models",
     "controllers",
-    "exports",
+    "exportations",
     "dashboards",
     "systems",
 ]
@@ -33,6 +33,10 @@ function project_folder_create_db(project_name)
         for i = 1:1:length(DEFAUT_FOLDER_TEMPLATE)
             mkdir(DEPOT_PATH[begin] * "/automationlabs/" * DEFAUT_FOLDER_TEMPLATE[i])
         end
+
+        # Copy the template package for withdrawal controller
+        path_AutomationLabsExportationController = split.(Base.find_package("AutomationLabsExportation"), "src")[1] * "exp" * "/" * "AutomationLabsExportationController"
+        cp(path_AutomationLabsExportationController, DEPOT_PATH[begin] * "/automationlabs/" * DEFAUT_FOLDER_TEMPLATE[6]* "/" * "AutomationLabsExportationController")
     end
 
     # Connect to the database
@@ -99,10 +103,10 @@ function project_folder_create_db(project_name)
                            );",
     )
 
-    # Create the exports table
+    # Create the exportations table
     DBInterface.execute(
         con,
-        "CREATE TABLE IF NOT EXISTS $(project_name).exports
+        "CREATE TABLE IF NOT EXISTS $(project_name).exportations
                            (
                                id VARCHAR(100) PRIMARY KEY NOT NULL,
                                path VARCHAR(100), 

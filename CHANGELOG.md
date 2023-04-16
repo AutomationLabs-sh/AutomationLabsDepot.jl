@@ -1,5 +1,10 @@
 # AutomationLabsDepot Changelog
 
+## v0.1.12
+
+* Add stats_system_local_folder_db methods for the systems.
+* Add stats_model_local_folder_db methods export for the models.
+
 ## v0.1.11
 
 * Add exportation management methods for the depot.

@@ -8,7 +8,7 @@
 module AutomationLabsDepot
 
 #package needed
-import CSV #needed?
+import CSV 
 import DataFrames
 import Dates
 import DuckDB
@@ -20,6 +20,7 @@ import Random
 import PlotlyJS
 import CUDA #needed?
 import StatsBase
+import AutomationLabsSystems
 
 # iodata
 export iodata_local_folder_db
@@ -41,6 +42,7 @@ export remove_iodata_local_folder_db
 export list_model_local_folder_db
 export remove_model_local_folder_db
 export add_model_local_folder_db
+export stats_model_local_folder_db
 
 # controller local disk db
 export list_controller_local_folder_db
@@ -59,6 +61,7 @@ export list_system_local_folder_db
 export remove_system_local_folder_db
 export add_system_local_folder_db
 export load_system_local_folder_db
+export stats_system_local_folder_db
 
 # exportations local disk db 
 export list_exportation_local_folder_db

@@ -111,7 +111,7 @@ function add_system_local_folder_db(system, project_name, system_name)
     return nothing
 end
 
-# load controller from local folder
+# load system from local folder
 function load_system_local_folder_db(project_name, system_name)
 
     # Connect to the database
@@ -131,7 +131,7 @@ function load_system_local_folder_db(project_name, system_name)
     path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
     con = DBInterface.connect(DuckDB.DB, path_db)
 
-    # Evaluate if the controller is in the database
+    # Evaluate if the system is in the database
     c_list = DuckDB.toDataFrame(
         DBInterface.execute(
             con,
@@ -139,7 +139,7 @@ function load_system_local_folder_db(project_name, system_name)
         ),
     )
     if size(c_list, 1) == 0
-        @warn "The controller is not present in the database"
+        @warn "The system is not present in the database"
         return false
     end
 
@@ -154,3 +154,61 @@ function load_system_local_folder_db(project_name, system_name)
 
     return system_p
 end
+
+# Get the statistics of a system 
+function stats_system_local_folder_db(project_name::String, system_name::String)
+
+    # Connect to the database
+    path_db = DEPOT_PATH[begin] * "/automationlabs/database/automationlabs.duckdb"
+    con = DBInterface.connect(DuckDB.DB, path_db)
+
+    # Evaluate if the project is in the database
+    project_list = DuckDB.toDataFrame(
+        DBInterface.execute(con, "SELECT * FROM information_schema.schemata;"),
+    )
+    if findall(x -> x == project_name, project_list[!, :schema_name]) == []
+        @warn "unrecognized project name"
+        return false
+    end
+
+    # Evaluate if the system is in the database
+    c_list = DuckDB.toDataFrame(
+        DBInterface.execute(
+            con,
+            "SELECT id, path, name, file_extension, added, size  FROM $project_name.systems WHERE name = '$system_name';",
+        ),
+    )
+    if size(c_list, 1) == 0
+        @warn "The system is not present in the database"
+        return false
+    end
+
+    # Load path data into local depot folder
+    path_model =
+    DEPOT_PATH[begin] * "/automationlabs" * "/" * "systems" * "/" * system_name * ".jld2"
+
+    # Evaluate if the files are in the depot folder
+    if isfile(path_model) == false
+        @warn "unrecognized system in depot folder"
+        return false
+    end
+
+    # Load the model from the database 
+    system_loaded = load_system_local_folder_db(project_name, system_name)
+
+    # Get the mathematical systme type 
+    sys_type = AutomationLabsSystems.proceed_system_evaluation(system_loaded)
+
+    # Get states and inputs constraints 
+    x_cons, u_cons = AutomationLabsSystems.proceed_system_constraints_evaluation(system_loaded)
+
+    # Close and disconnect the DuckDB database 
+    DBInterface.close!(con)
+
+    return [
+        sys_type,
+        x_cons,
+        u_cons,
+    ]
+end
+

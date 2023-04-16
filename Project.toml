@@ -1,9 +1,10 @@
 name = "AutomationLabsDepot"
 uuid = "cc8afec4-1da4-4339-ab39-14f2715a249b"
 authors = ["Pierre Blaud <pierre.blaud@ikmail.com> and contributors"]
-version = "0.1.11"
+version = "0.1.12"
 
 [deps]
+AutomationLabsSystems = "6d3dfdf0-e107-48c6-a6ff-eced1a5a9334"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
@@ -18,16 +19,17 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
+AutomationLabsSystems = "0.1"
 CSV = "0.10"
 CUDA = "4"
 DataFrames = "1"
 DuckDB = "0.7"
 FilePathsBase = "0.9"
+JLD2 = "0.4"
 MLJ = "0.19"
 Parquet2 = "0.2"
 PlotlyJS = "0.18"
 StatsBase = "0.33"
-JLD2 = "0.4"
 julia = "1"
 
 [extras]
